@@ -1,20 +1,41 @@
-# 🏎️ Autonomous Car Racing with Deep Q-Network (DQN)
+# 🏎️ Autonomous Car Racing with Deep Q-Network<br> (자율 주행 에이전트 구축: CNN-DQN 기반 CarRacing 프로젝트)
 
-> **CNN-DQN 기반 `CarRacing` 자율주행 에이전트 (프레임 스태킹, 경험 재생 적용)**
+![Python](https://img.shields.io/badge/Python-3.10-blue.svg)
+![PyTorch](https://img.shields.io/badge/PyTorch-2.0-ee4c2c.svg)
+![Gymnasium](https://img.shields.io/badge/Gymnasium-0.29-green.svg)
+![Gradio](https://img.shields.io/badge/Gradio-UI-orange.svg)
 
 ---
 
-## 1. Project Structure
-프로젝트는 재사용성과 유지보수를 고려하여 모듈화된 구조로 작성되었습니다.
+## 📌 프로젝트 요약 (Project Overview)
+**CNN-DQN 기반 `CarRacing` 자율주행 에이전트 (프레임 스태킹, 경험 재생 적용)**
+
+본 프로젝트는 강화학습 알고리즘인 **DQN(Deep Q-Network)**을 구현하여, OpenAI Gymnasium의 `CarRacing-v3` 환경에서 자동차가 트랙을 벗어나지 않고 자율 주행하도록 학습시키는 과정을 담은 프로젝트입니다. 연속적인 픽셀 이미지 데이터(주행 화면)를 CNN으로 직접 분석하고 최적의 주행 조작을 스스로 도출해내는 전체 파이프라인의 구축 및 배포 경험을 기록했습니다.
+
+👉 **[Play CarRacing Agent Live] ([https://huggingface.co/spaces/AD-Styles/CarRacing_Random_vs_DQN])**
+
+---
+
+## 🎯 핵심 목표 (Motivation)
+
+| 구분 | 세부 내용 |
+| :--- | :--- |
+| **연속적 상태 공간 제어** | 단순한 좌표나 속도 값이 아닌, 96x96 RGB 픽셀 화면 자체를 상태(State)로 인식하고 처리하는 Vision 기반 강화학습 모델 설계. |
+| **이산 행동 매핑** | Steering(조향), Gas(가속), Brake(감속)의 연속적 조작을 [좌회전, 직진, 우회전, 브레이크] 4가지 이산(Discrete) 행동으로 변환하여 학습 효율 극대화. |
+| **안정적 학습 환경 구축** | 시계열 데이터의 상관관계와 Q-value 발산 문제를 해결하기 위해 Experience Replay 및 Target Network 기법 적용. |
+
+---
+
+## 📁 프로젝트 구조 (Project Structure)
 
 ```text
 Car-Racing-DQN-Portfolio/
 ├── assets/                          # 시각화 그래프 및 플레이 영상 
 ├── models/                          # 학습된 모델 가중치 (dqn_carracing.pth)
 ├── notebooks/                       # 실험 및 검증용 주피터 파일
-│   ├── 01_DQN_Agent_Basic.ipynb     # 행동선택 및 학습함수 구현
-│   ├── 02_CarRacing_Env.ipynb       # CNN 확장 및 환경 테스트
-│   └── 03_DQN_Training.ipynb        # 본격 학습 및 모델 저장
+│   ├── 01_DQN_Agent_Basic.ipynb     
+│   ├── 02_CarRacing_Env.ipynb       
+│   └── 03_DQN_Training.ipynb        
 ├── src/                             # 핵심 소스 코드
 │   ├── env_wrapper.py               # 환경 전처리 (Frame Stacking 등)
 │   ├── network.py                   # CNN 모델 아키텍처
@@ -22,47 +43,36 @@ Car-Racing-DQN-Portfolio/
 │   └── train.py                     # 학습 파이프라인 루프
 ├── app.py                           # Hugging Face Space 배포 스크립트
 ├── requirements.txt                 # 의존성 패키지
-└── README.md                        # 메인 포트폴리오 문서
+└── README.md
 ```
 
-## 2. Core Concepts: DQN
-단순한 Q-Learning의 한계를 극복하기 위해 딥러닝을 결합한 DQN의 핵심 기술들을 에이전트에 적용했습니다.
+---
 
-| 핵심 개념 | 구현 및 적용 목적 |
-| :--- | :--- |
-| **Epsilon-Greedy 탐험** | 학습 초기에는 무작위 행동으로 환경을 탐험(Exploration)하고, 점진적으로 Epsilon 값을 감소시켜 학습된 신경망의 가치를 활용(Exploitation)하도록 균형을 맞춥니다. |
-| **Experience Replay** | 에이전트의 경험 `(State, Action, Reward, Next State)`을 버퍼에 저장하고, 무작위로 미니 배치를 추출하여 학습합니다. 데이터 간의 상관관계를 끊어 학습 안정성을 높입니다. |
-| **Target Network 분리** | Q값을 갱신할 때 타겟값이 계속 변동하는 불안정성을 막기 위해, 일정 주기마다 가중치가 동기화되는 별도의 Target Network를 유지합니다. |
+## 🧠 핵심 파이프라인 (Core Pipeline)
+
+에이전트가 화면을 보고 판단을 내리기까지의 과정입니다.
+
+| 데이터 파이프라인 | 상세 처리 내용 | 비고 |
+| :--- | :--- | :--- |
+| **Grayscale & Resizing** | 3채널 RGB 이미지를 1채널 흑백으로 변환하고, 84x84 크기로 축소 및 정규화(0~1) | 연산량 대폭 감소 |
+| **Frame Stacking** | 최근 4개의 프레임을 누적(`4x84x84`)하여 CNN의 입력으로 사용 | 속도 및 이동 방향 파악 |
+| **CNN Architecture** | 3개의 Conv Layer를 거쳐 특징을 추출하고, 2개의 FC Layer를 통해 4가지 행동에 대한 Q-Value 산출 | 이미지 공간 특징 추출 |
 
 ---
 
-## 3. Environment & Data Preprocessing
-차량의 주행 화면(96x96 RGB 픽셀)을 에이전트가 효율적으로 학습할 수 있도록 전처리 파이프라인을 구축했습니다.
+## 📊 학습 개념의 직관적 해석 (Analogies)
 
-| 전처리 단계 | 상세 설명 및 목적 |
-| :--- | :--- |
-| **Action Mapping** | 원래의 연속적인 조작(Steering, Gas, Brake)을 [좌회전, 직진, 우회전, 브레이크] 4가지의 이산적(Discrete) 행동으로 매핑하여 DQN의 출력으로 사용합니다. |
-| **Grayscale & Resizing** | 연산량을 줄이기 위해 3채널 RGB 이미지를 1채널 흑백으로 변환하고, 화면 크기를 84x84로 축소 및 정규화(0~1)합니다. |
-| **Frame Stacking** | 정지된 1장의 이미지만으로는 차량의 속도와 이동 방향을 알 수 없으므로, 최근 4개의 프레임을 누적하여 하나의 State(`4x84x84`)로 모델에 입력합니다. |
+어렵고 복잡한 강화학습의 핵심 개념들을 직관적인 비유로 정리했습니다.
 
----
-
-## 4. Model Architecture (CNN)
-시간적 맥락이 포함된 4채널 이미지 데이터를 처리하여 각 행동의 Q값을 예측하는 합성곱 신경망(CNN)을 설계했습니다.
-
-| Layer | Type | Input Shape | Configuration | Activation |
-| :--- | :--- | :--- | :--- | :--- |
-| **Conv1** | 2D Convolution | `(4, 84, 84)` | 32 filters, Kernel 8x8, Stride 4 | ReLU |
-| **Conv2** | 2D Convolution | `(32, 20, 20)` | 64 filters, Kernel 4x4, Stride 2 | ReLU |
-| **Conv3** | 2D Convolution | `(64, 9, 9)` | 64 filters, Kernel 3x3, Stride 1 | ReLU |
-| **Flatten** | - | `(64, 7, 7)` | 3136 features | - |
-| **FC1** | Fully Connected | `3136` | 512 units | ReLU |
-| **FC2** | Fully Connected | `512` | 4 units (Q-values) | Linear |
+| 핵심 개념 | 비유 (Analogy) | 기술적 의미 설명 |
+| :--- | :--- | :--- |
+| **Epsilon-Greedy 탐험** | **맛집 탐방** | 무조건 아는 맛집만 가는 것(가치 활용)이 아니라, 가끔은 새로운 식당(무작위 탐험)을 시도하여 더 나은 식당을 찾는 과정 |
+| **Experience Replay** | **랜덤 오답 노트 복습** | 직전에 푼 문제만 이어서 풀면 편향이 생기므로, 과거의 경험들을 버퍼에 모아두고 무작위로 섞어서 다시 복습하며 학습 안정성을 높이는 기법 |
+| **Target Network 분리** | **움직이는 과녁 멈추기** | 정답(Target)이 계속 변하면 활을 맞추기 어려우므로, 일정 주기마다 과녁의 위치를 고정해두고 영점을 조절하는 방식 |
 
 ---
 
-## 5. Training Results & Metrics
-에이전트의 학습 성과를 나타내는 주요 지표입니다.
+## 📈 학습 결과 및 성능 지표 (Training Results & Metrics)
 
 *(참고: `assets/` 폴더에 결과 이미지를 추가하고 아래 경로를 활성화하세요.)*
 
@@ -73,10 +83,10 @@ Car-Racing-DQN-Portfolio/
 
 ---
 
-## 6. Try it Live (Hugging Face Space)
-학습이 완료된 모델은 브라우저에서 직접 실행해 볼 수 있도록 Hugging Face Space에 배포되었습니다.
+## 💡 회고록 (Retrospective)
 
-👉 **[Play CarRacing Agent Live] (여기에 Hugging Face 스페이스 링크 삽입)**
+이전까지는 CartPole과 같이 환경이 단순한 숫자 배열로 주어지는 문제들만 다루어 왔습니다. 하지만 이번 CarRacing 프로젝트를 통해 **'날것의 이미지(Raw Pixel) 데이터를 어떻게 에이전트가 이해할 수 있는 상태(State)로 변환할 것인가?'**에 대한 깊은 고민을 할 수 있었습니다.
 
-* **Framework:** Gradio / PyTorch
-* 모델이 실시간으로 프레임을 추론하여 주행하는 모습을 영상 스트리밍 형태로 확인 가능합니다.
+특히, 정지된 한 장의 이미지만으로는 자동차가 앞으로 가고 있는지 뒤로 가고 있는지 알 수 없다는 문제를 마주했을 때, **Frame Stacking(프레임 누적)** 기법을 통해 이미지 데이터에 '시간적 맥락'을 부여하여 해결했던 과정이 가장 기억에 남습니다. 
+
+또한, 강화학습 특유의 불안정성을 경험하며 모델이 발산(Divergence)하는 현상을 겪기도 했습니다. 이를 해결하기 위해 Replay Buffer의 크기, Epsilon 감소율(Decay rate), Target Network 업데이트 주기 등 하이퍼파라미터가 모델 안정성에 미치는 영향을 직접 눈으로 확인하며 튜닝하는 값진 경험을 얻었습니다. 최종적으로 에이전트가 트랙을 스스로 파악하고 부드럽게 코너링을 해내는 모습을 보았을 때, 이론으로만 배우던 딥러닝과 강화학습의 시너지를 온전히 실감할 수 있었습니다.
