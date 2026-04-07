@@ -41,13 +41,14 @@
 
 ## 🧠 핵심 파이프라인 (Core Pipeline)
 
-에이전트가 화면을 보고 판단을 내리기까지의 과정입니다.
+에이전트가 화면을 보고 판단을 내리기까지의 과정.
 
-| 데이터 파이프라인 | 상세 처리 내용 | 비고 |
+| 데이터 파이프라인 | 상세 처리 내용 | 처리 모듈 |
 | :--- | :--- | :--- |
-| **Grayscale & Resizing** | 3채널 RGB 이미지를 1채널 흑백으로 변환하고, 84x84 크기로 축소 및 정규화(0~1) | 연산량 대폭 감소 |
-| **Frame Stacking** | 최근 4개의 프레임을 누적(`4x84x84`)하여 CNN의 입력으로 사용 | 속도 및 이동 방향 파악 |
-| **CNN Architecture** | 3개의 Conv Layer를 거쳐 특징을 추출하고, 2개의 FC Layer를 통해 4가지 행동에 대한 Q-Value 산출 | 이미지 공간 특징 추출 |
+| **Action Mapping** | 원래의 연속적인 조작(Steering, Gas, Brake)을 4가지의 이산적(Discrete) 행동으로 매핑하여 DQN의 출력으로 사용 | `app.py` |
+| **Grayscale & Resizing** | 3채널 RGB 이미지를 1채널 흑백으로 변환하고, 84x84 크기로 축소 및 정규화 | `app.py` |
+| **Frame Stacking** | 정지된 프레임에서 속도와 방향을 파악하기 위해 최근 4개의 프레임을 누적(`4x84x84`) | `app.py` |
+| **CNN Architecture** | 3개의 Conv Layer를 거쳐 특징을 추출하고, 2개의 FC Layer를 통해 4가지 행동에 대한 Q-Value 산출 | `agent.py` |
 
 ---
 
