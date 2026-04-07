@@ -1,0 +1,7 @@
+# requirements.txt
+gymnasium[box2d]==0.29.1
+torch>=2.0.0
+torchvision
+numpy
+opencv-python-headless
+gradio
