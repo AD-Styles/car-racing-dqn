@@ -23,7 +23,7 @@ import os
 from collections import deque
 
 # ─────────────────────────────────────────────
-# 1. 모델 & 환경 정의 (5-1 노트북과 동일)
+# 1. 모델 & 환경 정의
 # ─────────────────────────────────────────────
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -94,7 +94,7 @@ class DQN(nn.Module):
 
 
 # ─────────────────────────────────────────────
-# 2. ReplayBuffer & DQNAgent (5-1 노트북과 동일)
+# 2. ReplayBuffer & DQNAgent
 # ─────────────────────────────────────────────
 
 class ReplayBuffer:
@@ -229,7 +229,7 @@ def record_episode(model, use_model=True, max_steps=400):
 
 
 # ─────────────────────────────────────────────
-# 5. DQN 학습 함수 (5-1 노트북의 train_dqn 기반)
+# 5. DQN 학습 함수
 # ─────────────────────────────────────────────
 
 def train_dqn(num_episodes, progress=gr.Progress()):
