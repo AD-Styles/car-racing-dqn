@@ -29,8 +29,8 @@
 ```text
 📁car-racing-dqn/
 ├──📁 src
-└──📄 agent.py    # 이미지를 분석하는 CNN 신경망을 정의하고, Epsilon-Greedy 기반의 행동 선택과 미니 배치를 통한 Q-value 업데이트
-└──📄app.py      # 환경 전처리, 학습 루프 통합 및 Hugging Face Space 배포 스크립트
+│   ├──📄 agent.py    # 이미지를 분석하는 CNN 신경망을 정의하고, Epsilon-Greedy 기반의 행동 선택과 미니 배치를 통한 Q-value 업데이트
+│   └──📄app.py      # 환경 전처리, 학습 루프 통합 및 Hugging Face Space 배포 스크립트
 ├──📄 .gitignore
 ├──📄 LICENSE
 ├──📄 README.md
