@@ -1,4 +1,4 @@
-# 🏎️ Autonomous Car Racing with Deep Q-Network <br>(CNN-DQN 기반 `CarRacing` 자율주행 에이전트 구축 및 웹 데모 배포<br> 프로젝트)
+# 🏎️ Autonomous Car Racing with Deep Q-Network <br>(CNN-DQN 기반 CarRacing 자율주행 에이전트 구축 및 웹 데모 배포<br> 프로젝트)
 
 ![Python](https://img.shields.io/badge/Python-3.10-blue.svg)
 ![PyTorch](https://img.shields.io/badge/PyTorch-2.0-ee4c2c.svg)
