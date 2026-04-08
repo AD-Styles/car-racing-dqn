@@ -16,11 +16,11 @@
 
 ## 🎯 핵심 목표 (Motivation)
 
-| 구분&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | 세부 내용 |
+| 구분 | 세부 내용 |
 | :--- | :--- |
-| **연속적 상태 공간 제어** | 단순한 좌표나 속도 값이 아닌, 96x96 RGB 픽셀 화면 자체를 상태(State)로 인식하고 처리하는 Vision 기반 강화학습 모델 설계 |
-| **이산 행동 매핑** | Steering(조향), Gas(가속), Brake(감속)의 연속적 조작을 [좌회전, 직진, 우회전, 브레이크] 4가지 이산(Discrete) 행동으로 변환하여 학습 효율 극대화 |
-| **안정적 학습 환경 구축** | 시계열 데이터의 상관관계와 Q-value 발산 문제를 해결하기 위해 Experience Replay 및 Target Network 기법 적용 |
+| **연속적&nbsp;상태&nbsp;공간&nbsp;제어** | 단순한 좌표나 속도 값이 아닌, 96x96 RGB 픽셀 화면 자체를 상태(State)로 인식하고 처리하는 Vision 기반 강화학습 모델 설계 |
+| **이산&nbsp;행동&nbsp;매핑** | Steering(조향), Gas(가속), Brake(감속)의 연속적 조작을 [좌회전, 직진, 우회전, 브레이크] 4가지 이산(Discrete) 행동으로 변환하여 학습 효율 극대화 |
+| **안정적&nbsp;학습&nbsp;환경&nbsp;구축** | 시계열 데이터의 상관관계와 Q-value 발산 문제를 해결하기 위해 Experience Replay 및 Target Network 기법 적용 |
 
 ---
 
