@@ -59,7 +59,8 @@
 
 | 핵심 개념 | 비유 (Analogy)&nbsp;&nbsp;&nbsp;&nbsp; | 기술적 의미 설명&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 | :--- | :--- | :--- |
-| **Epsilon-Greedy<br> 탐험** | **맛집 탐방** | 무조건 아는 맛집만 가는 것(가치 활용)이 아니라, 가끔은 새로운 식당(무작위 <br>탐험)을 시도하여 더<br> 나은 식당을 찾는 과정 |
+| **Epsilon-Greedy<br> 탐험** | **맛집 탐방** | 무조건 아는 맛집만 가는 것(가치 활용)이 아니라, 가끔은 새로운 식당(무작위 <br>탐험)을 시도하여 더<br> 나은 식당을
+찾는 과정 |
 | **Experience Replay** | **랜덤 오답 노트<br> 복습** | 직전에 푼 문제만 이어서 풀면 편향이 생기므로, 과거의 경험들을 버퍼에 모아두고 무작위로 섞어서<br> 다시 복습하며 학습 안정성을 높이는 기법 |
 | **Target Network<br> 분리** | **움직이는 과녁<br> 멈추기** | 정답(Target)이 계속 변하면 활을 맞추기 어려우므로, 일정 주기마다 과녁의 위치를 고정해두고 영점을 조절하는 방식 |
 
