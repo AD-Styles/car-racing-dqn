@@ -5,6 +5,7 @@
 ![PyTorch](https://img.shields.io/badge/PyTorch-2.0-ee4c2c.svg)
 ![Gymnasium](https://img.shields.io/badge/Gymnasium-0.29-green.svg)
 ![Gradio](https://img.shields.io/badge/Gradio-UI-orange.svg)
+![HuggingFace](https://img.shields.io/badge/%F0%9F%A4%97-Hugging%20Face-yellow.svg)
 
 ---
 
